@@ -12,10 +12,10 @@ data class ClubAdmin(
     override val id: Long?,
 
     @ManyToOne
-    @JoinColumn(name = "club_id")
+    @JoinColumn(name = "clubs_id")
     var club: Club,
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "users_id")
     var user: User
 ): EntityId

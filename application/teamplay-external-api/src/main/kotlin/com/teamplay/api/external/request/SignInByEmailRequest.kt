@@ -3,7 +3,7 @@ package com.teamplay.api.com.teamplay.api.external.request
 import javax.validation.constraints.Email
 import javax.validation.constraints.Size
 
-data class SignInByEmailRequest(
+class SignInByEmailRequest(
     @field:Email
     @field:Size(min = 1, max = 255)
     val email: String,

@@ -1,32 +1,11 @@
 package com.teamplay.api.com.teamplay.api.external.controller
 
-import com.teamplay.api.com.teamplay.api.external.request.CreateClubRequest
-import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
-import com.teamplay.api.com.teamplay.api.external.service.AuthService
-import com.teamplay.api.com.teamplay.api.external.service.ClubService
 import io.swagger.annotations.ApiOperation
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @RestController
 @RequestMapping("/clubs")
 class ClubController {
-    @Autowired
-    private lateinit var authService: AuthService
-
-    @Autowired
-    private lateinit var clubService: ClubService
-
-    @ApiOperation(value = "동호회 생성")
-    @PostMapping
-    fun registerClub(
-        @Valid @RequestHeader(required = false) accessToken: String,
-        @RequestBody createClubRequest: CreateClubRequest
-    ): CreateClubResponse {
-        val user = authService.getUserByAccessToken(accessToken)
-        return clubService.registerClub(createClubRequest, user)
-    }
 
     @ApiOperation(value = "동호회 목록 정보")
     @GetMapping
@@ -61,6 +40,12 @@ class ClubController {
     @GetMapping("/feed")
     fun getNewsFeed(): String {
         return "동호회 뉴스피드"
+    }
+
+    @ApiOperation(value = "동호회 생성")
+    @PostMapping
+    fun save(): String {
+        return "동호회 생성"
     }
 
     @ApiOperation(value = "피드 생성")

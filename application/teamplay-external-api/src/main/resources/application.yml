@@ -4,10 +4,10 @@ spring:
   profiles: local
   jpa:
     show-sql: true
-    hibernate.ddl-auto: create
+#    hibernate.ddl-auto: create
 
   datasource:
-    url: jdbc:mysql://localhost/teamplay?characterEncoding=utf8&useUnicode=true&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC
+    url: jdbc:mysql://localhost/teamplay?characterEncoding=utf8&useUnicode=true&autoReconnect=true&zeroDateTimeBehavior=convertToNull
     username: test
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver

@@ -72,19 +72,6 @@ class AuthService @Autowired constructor(
         return userToSignInResponse(user)
     }
 
-    fun getUserByAccessToken(accessToken: String): User{
-        val userId = getUserIdByAccessToken(accessToken)
-
-        return findUserById(userId)
-    }
-
-    fun getUserIdByAccessToken(accessToken: String): Long{
-        val userId = findUserIdByAccessToken(accessToken)
-        checkExistUserById.verify(userId)
-
-        return userId
-    }
-
     private fun userToSignInResponse(user: User): SignInResponse{
         return SignInResponse(
             generateAccessToken(user),
