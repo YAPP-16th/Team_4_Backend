@@ -7,6 +7,6 @@ class CheckPossibleEmail(
     private val userRepository: UserRepository
 ): Function<String, Boolean> {
     override fun apply(email: String): Boolean {
-        return userRepository.existsByNickname(email)
+        return userRepository.existsByEmail(email)
     }
 }
