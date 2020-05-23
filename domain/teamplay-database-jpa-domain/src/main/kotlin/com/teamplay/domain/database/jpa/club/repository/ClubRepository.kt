@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ClubRepository : ExtendedRepository<Club> {
+
     fun existsByName(name: String): Boolean
 
     fun findAllByNameContaining(name: String, pageable: Pageable): Page<Club>
@@ -19,4 +20,5 @@ interface ClubRepository : ExtendedRepository<Club> {
 
     @Query("SELECT c FROM Club c LEFT JOIN c.characters cc WHERE cc IN (:characters) GROUP BY c.id")
     fun findAllByCharactersIn(@Param("characters")characters: List<ClubCharacter>, pageable: Pageable): Page<Club>
+
 }

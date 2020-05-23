@@ -8,7 +8,6 @@ import com.teamplay.api.com.teamplay.api.external.response.ClubsResponse
 import com.teamplay.api.com.teamplay.api.external.response.ClubJoinInfoResponse
 import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
 import com.teamplay.domain.business.club.dto.*
-import com.teamplay.domain.business.club.error.ClubIsNotExistError
 import com.teamplay.domain.business.club.function.*
 import com.teamplay.domain.business.club.validator.CheckAlreadyRegisteredClub
 import com.teamplay.domain.business.club.validator.CheckExistClub
@@ -123,22 +122,15 @@ class ClubService @Autowired constructor(
         )
     }
 
-    fun findClubMembers(clubId: Long): MutableList<ClubMember> {
-        return findClubMembersByClubId(clubId)
-    }
-
-    fun findClubAdmins(clubId: Long): MutableList<ClubAdmin> {
-        return findClubAdminsByClubId(clubId)
-    }
-
     fun findClubInfosByName(name: String, getClubsRequest: GetClubsRequest): ClubsResponse{
         val clubsPage = findClubsByName(NameAndPage(name, getClubsRequest.currentPage))
         val clubs = clubsPage.content
 
         return ClubsResponse(
-            clubsToClubInfos(clubs),
+            clubsToListClubInfos(clubs),
             clubsPage.totalPages,
-            clubsPage.number
+            clubsPage.number,
+            clubsPage.totalElements
         )
     }
 
@@ -147,9 +139,10 @@ class ClubService @Autowired constructor(
         val clubs = clubsPage.content
 
         return ClubsResponse(
-            clubsToClubInfos(clubs),
+            clubsToListClubInfos(clubs),
             clubsPage.totalPages,
-            clubsPage.number
+            clubsPage.number,
+            clubsPage.totalElements
         )
     }
 
@@ -158,11 +151,31 @@ class ClubService @Autowired constructor(
         val clubs = clubsPage.content
 
         return ClubsResponse(
-            clubsToClubInfos(clubs),
+            clubsToListClubInfos(clubs),
             clubsPage.totalPages,
-            clubsPage.number
+            clubsPage.number,
+            clubsPage.totalElements
         )
     }
+
+    private fun clubsToListClubInfos(clubs: MutableList<Club>): MutableList<ClubListInfo>{
+        var clubListInfos = mutableListOf<ClubListInfo>()
+        for(club in clubs){
+            val memberCount = findClubMembers(club.id!!).size
+            clubListInfos.add(ClubListInfo(club.id!!, club.name, club.location, memberCount))
+        }
+
+        return clubListInfos
+    }
+
+    fun findClubMembers(clubId: Long): MutableList<ClubMember> {
+        return findClubMembersByClubId(clubId)
+    }
+
+    fun findClubAdmins(clubId: Long): MutableList<ClubAdmin> {
+        return findClubAdminsByClubId(clubId)
+    }
+
 
     private fun clubAdminToUserInfo(admins: MutableList<ClubAdmin>): MutableList<UserInfo>{
         var userInfos = mutableListOf<UserInfo>()
