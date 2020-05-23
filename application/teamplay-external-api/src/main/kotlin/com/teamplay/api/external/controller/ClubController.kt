@@ -57,6 +57,7 @@ class ClubController {
 
         return clubService.findClubJoinInfo(clubId)
     }
+
     @ApiOperation(value = "동호회 검색")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
