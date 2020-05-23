@@ -29,7 +29,7 @@ class ClubController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun registerClub(
-        @Valid @RequestHeader(required = false) accessToken: String,
+        @Valid @RequestHeader accessToken: String,
         @RequestBody createClubRequest: CreateClubRequest
     ): CreateClubResponse {
         val user = authService.getUserByAccessToken(accessToken)
@@ -40,7 +40,7 @@ class ClubController {
     @PostMapping("/join")
     @ResponseStatus(HttpStatus.OK)
     fun joinClub(
-        @Valid @RequestHeader(required = false) accessToken: String,
+        @Valid @RequestHeader accessToken: String,
         @RequestBody clubId: Long
     ): ClubResponse{
         val user = authService.getUserByAccessToken(accessToken)
@@ -57,6 +57,10 @@ class ClubController {
 
         return clubService.findClubJoinInfo(clubId)
     }
+    @ApiOperation(value = "동호회 검색")
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    fun getClubs(getClubsRequest: GetClubsRequest) = getClubsByName("",getClubsRequest)
 
     @ApiOperation(value = "동호회 이름으로 검색")
     @GetMapping("/names/{name}")
