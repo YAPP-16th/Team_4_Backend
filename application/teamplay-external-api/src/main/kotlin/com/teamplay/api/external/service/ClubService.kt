@@ -11,6 +11,7 @@ import com.teamplay.domain.business.club.dto.*
 import com.teamplay.domain.business.club.error.ClubIsNotExistError
 import com.teamplay.domain.business.club.function.*
 import com.teamplay.domain.business.club.validator.CheckAlreadyRegisteredClub
+import com.teamplay.domain.business.club.validator.CheckDuplicateClubName
 import com.teamplay.domain.business.club.validator.CheckExistClub
 import com.teamplay.domain.business.user.dto.UserInfo
 import com.teamplay.domain.business.user.function.FindUserById
@@ -45,10 +46,12 @@ class ClubService @Autowired constructor(
     private val findClubsByCharacters = FindClubsByCharacters(clubRepository)
     private val findUserById = FindUserById(userRepository)
 
+    private val checkDuplicateClubName = CheckDuplicateClubName(clubRepository)
     private val checkExistClub = CheckExistClub(clubRepository)
     private val checkAlreadyRegisterMember = CheckAlreadyRegisteredClub(clubMemberRepository)
 
     fun joinClub(joinClubRequest: JoinClubRequest): ClubResponse{
+
         val user = findUserById(joinClubRequest.userId)
         val club = findClubById(joinClubRequest.clubId)
         val clubMember = registerMemberClub(user, club)
@@ -57,7 +60,7 @@ class ClubService @Autowired constructor(
     }
 
     fun registerClub(createClubRequest: CreateClubRequest, user: User): CreateClubResponse{
-
+        checkDuplicateClubName.verify(createClubRequest.name)
         var club = createClub(requestToClub(createClubRequest))
         club.admin.add(registerAdminInClub(user, club))
         club.members.add(registerMemberClub(user,club))
