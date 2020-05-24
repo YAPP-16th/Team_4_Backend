@@ -1,4 +1,4 @@
 package com.teamplay.api.com.teamplay.api.external.request
 
-class GetClubsByCharactersRequest {
+class UpdateClubNoticeRequest {
 }

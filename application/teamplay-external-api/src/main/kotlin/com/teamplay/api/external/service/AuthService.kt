@@ -5,6 +5,7 @@ import com.teamplay.api.com.teamplay.api.external.request.SignUpByEmailRequest
 import com.teamplay.api.com.teamplay.api.external.response.PossibleEmailResponse
 import com.teamplay.api.com.teamplay.api.external.response.PossibleNicknameResponse
 import com.teamplay.api.com.teamplay.api.external.response.SignInResponse
+import com.teamplay.domain.business.token.dto.AccessToken
 
 import com.teamplay.domain.business.token.function.*
 import com.teamplay.domain.business.user.dto.UserInfo
@@ -109,15 +110,17 @@ class AuthService @Autowired constructor(
         )
     }
 
-    fun refreshAccessToken(refreshToken: String): String{
+    fun refreshAccessToken(refreshToken: String): AccessToken{
         val userId = findUserIdByRefreshToken(refreshToken)
         checkExistUserById.verify(userId)
         val user = findUserById(userId)
         return generateAccessToken(user)
     }
 
-    private fun generateAccessToken(user: User): String{
-        return encodeToken(generateAccessTokenByUser(user))
+    private fun generateAccessToken(user: User): AccessToken{
+        val token = generateAccessTokenByUser(user)
+
+        return AccessToken(encodeToken(token), token.expiration!!.time)
     }
 
     private fun generateRefreshToken(user: User): String{

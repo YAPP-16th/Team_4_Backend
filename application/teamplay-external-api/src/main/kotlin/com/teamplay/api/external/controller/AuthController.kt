@@ -7,6 +7,7 @@ import com.teamplay.api.com.teamplay.api.external.response.PossibleEmailResponse
 import com.teamplay.api.com.teamplay.api.external.response.PossibleNicknameResponse
 import com.teamplay.api.com.teamplay.api.external.response.SignInResponse
 import com.teamplay.api.com.teamplay.api.external.service.AuthService
+import com.teamplay.domain.business.token.dto.AccessToken
 import io.swagger.annotations.ApiOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -50,7 +51,7 @@ class AuthController {
     @ApiOperation(value = "액세스 토큰 재발급")
     @GetMapping("/access-token")
     @ResponseStatus(HttpStatus.OK)
-    fun refreshAccessToken(@Valid @RequestHeader refreshToken: String): String {
+    fun refreshAccessToken(@Valid @RequestHeader refreshToken: String): AccessToken {
         return authService.refreshAccessToken(refreshToken)
     }
 }
