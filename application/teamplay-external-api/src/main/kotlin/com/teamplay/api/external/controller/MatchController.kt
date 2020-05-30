@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("$baseUrl/matches")
 class MatchController (
-        private val matchService: MatchService
+    private val matchService: MatchService
 ) {
     @ApiOperation(value = "매칭 게시글 보기")
     @GetMapping

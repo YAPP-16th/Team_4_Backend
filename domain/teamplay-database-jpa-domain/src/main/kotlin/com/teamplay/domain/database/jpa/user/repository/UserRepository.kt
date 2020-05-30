@@ -19,7 +19,6 @@ interface UserRepository: ExtendedRepository<User> {
 
     fun existsByNickname(nickname: String): Boolean
 
-
     @Transactional
     @Modifying
     @Query("update User user set user.hashedPassword = :hashedPassword where user.id = :id")

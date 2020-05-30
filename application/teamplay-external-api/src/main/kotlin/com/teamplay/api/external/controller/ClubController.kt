@@ -64,7 +64,6 @@ class ClubController {
     @GetMapping("/names/{name}")
     @ResponseStatus(HttpStatus.OK)
     fun getClubsByName(@PathVariable name: String, getClubsRequest: GetClubsRequest): ClubsResponse {
-
         return clubService.findClubInfosByName(name, getClubsRequest)
     }
 
@@ -72,7 +71,6 @@ class ClubController {
     @GetMapping("/addresses/{address}")
     @ResponseStatus(HttpStatus.OK)
     fun getClubsByAddress(@PathVariable address: String, getClubsRequest: GetClubsRequest): ClubsResponse {
-
         return clubService.findClubInfosByAddress(address, getClubsRequest)
     }
 

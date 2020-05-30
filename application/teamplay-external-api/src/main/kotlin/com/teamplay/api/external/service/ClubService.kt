@@ -44,6 +44,8 @@ class ClubService @Autowired constructor(
     private val saveNotice = SaveNotice(noticeRepository)
     private val findNoticesByClubId = FindNoticesByClubId(noticeRepository)
     private val findNoticeById = FindNoticeById(noticeRepository)
+    private val findClubMembersByUserId = FindClubMembersByUserId(clubMemberRepository)
+    private val findClubAdminsByUserId = FindClubAdminsByUserId(clubAdminRepository)
 
     private val checkDuplicateClubName = CheckDuplicateClubName(clubRepository)
     private val checkExistClub = CheckExistClub(clubRepository)
@@ -124,6 +126,23 @@ class ClubService @Autowired constructor(
             feedCount = 3,
             simpleFeeds = simpleFeeds
         )
+    }
+
+    fun findUserClubs(userId: Long): UserClubsResponse{
+        val clubAdmins = findClubAdminsByUserId(userId)
+        val clubMembers = findClubMembersByUserId(userId)
+        val clubsInfo = mutableListOf<UserClubInfo>()
+
+        clubAdmins.forEach { clubsInfo.add(clubToUserClubInfo(it.club, ClubRole.ADMIN)) }
+        clubMembers.forEach { clubsInfo.add(clubToUserClubInfo(it.club, ClubRole.MEMBER)) }
+
+        return UserClubsResponse(clubsInfo.distinctBy { it.id })
+    }
+
+    private fun clubToUserClubInfo(club: Club, clubRole: ClubRole): UserClubInfo{
+        val memberCount = findClubMembersByUserId(club.id).size
+
+        return UserClubInfo(club, memberCount, clubRole)
     }
 
     fun findClubJoinInfo(clubId: Long): ClubJoinInfoResponse{

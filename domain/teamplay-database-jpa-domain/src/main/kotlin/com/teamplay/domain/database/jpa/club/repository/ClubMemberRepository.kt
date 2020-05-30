@@ -11,5 +11,7 @@ interface ClubMemberRepository : ExtendedRepository<ClubMember> {
 
     fun findAllByClubId(clubId: Long): MutableList<ClubMember>
 
+    fun findAllByUserId(userId: Long): List<ClubMember>
+
     fun existsByClub_IdAndUser_Id(clubId: Long, userId: Long): Boolean
 }
