@@ -3,10 +3,8 @@ package com.teamplay.api.com.teamplay.api.external.controller
 import com.teamplay.api.com.teamplay.api.external.request.CreateClubRequest
 import com.teamplay.api.com.teamplay.api.external.request.GetClubsRequest
 import com.teamplay.api.com.teamplay.api.external.request.JoinClubRequest
-import com.teamplay.api.com.teamplay.api.external.response.ClubResponse
-import com.teamplay.api.com.teamplay.api.external.response.ClubsResponse
-import com.teamplay.api.com.teamplay.api.external.response.ClubJoinInfoResponse
-import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
+import com.teamplay.api.com.teamplay.api.external.request.UpdateClubNoticeRequest
+import com.teamplay.api.com.teamplay.api.external.response.*
 import com.teamplay.api.com.teamplay.api.external.service.AuthService
 import com.teamplay.api.com.teamplay.api.external.service.ClubService
 import com.teamplay.domain.database.club.entity.ClubCharacter
@@ -101,5 +99,15 @@ class ClubController {
     fun getClubCharacters(): List<ClubCharacter> {
 
         return ClubCharacter.values().asList()
+    }
+
+    @ApiOperation(value = "동호회 공지사항 수정")
+    @PostMapping("/{clubId}/notices/{noticeId}")
+    fun updateNotice(
+        @PathVariable clubId: Long,
+        @PathVariable noticeId: Long,
+        updateClubNoticeRequest: UpdateClubNoticeRequest
+    ): UpdateClubNoticeResponse {
+        return clubService.updateNotice(noticeId, updateClubNoticeRequest)
     }
 }

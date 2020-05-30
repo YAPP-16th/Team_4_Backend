@@ -3,10 +3,8 @@ package com.teamplay.api.com.teamplay.api.external.service
 import com.teamplay.api.com.teamplay.api.external.request.CreateClubRequest
 import com.teamplay.api.com.teamplay.api.external.request.GetClubsRequest
 import com.teamplay.api.com.teamplay.api.external.request.JoinClubRequest
-import com.teamplay.api.com.teamplay.api.external.response.ClubResponse
-import com.teamplay.api.com.teamplay.api.external.response.ClubsResponse
-import com.teamplay.api.com.teamplay.api.external.response.ClubJoinInfoResponse
-import com.teamplay.api.com.teamplay.api.external.response.CreateClubResponse
+import com.teamplay.api.com.teamplay.api.external.request.UpdateClubNoticeRequest
+import com.teamplay.api.com.teamplay.api.external.response.*
 import com.teamplay.domain.business.club.dto.*
 import com.teamplay.domain.business.club.function.*
 import com.teamplay.domain.business.club.validator.CheckAlreadyRegisteredClub
@@ -14,13 +12,11 @@ import com.teamplay.domain.business.club.validator.CheckDuplicateClubName
 import com.teamplay.domain.business.club.validator.CheckExistClub
 import com.teamplay.domain.business.user.dto.UserInfo
 import com.teamplay.domain.business.user.function.FindUserById
-import com.teamplay.domain.database.club.entity.Club
-import com.teamplay.domain.database.club.entity.ClubAdmin
-import com.teamplay.domain.database.club.entity.ClubCharacter
-import com.teamplay.domain.database.club.entity.ClubMember
+import com.teamplay.domain.database.club.entity.*
 import com.teamplay.domain.database.jpa.club.repository.ClubAdminRepository
 import com.teamplay.domain.database.jpa.club.repository.ClubMemberRepository
 import com.teamplay.domain.database.jpa.club.repository.ClubRepository
+import com.teamplay.domain.database.jpa.club.repository.NoticeRepository
 import com.teamplay.domain.database.jpa.user.repository.UserRepository
 import com.teamplay.domain.database.user.entity.User
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,6 +28,7 @@ class ClubService @Autowired constructor(
     clubRepository: ClubRepository,
     clubAdminRepository: ClubAdminRepository,
     clubMemberRepository: ClubMemberRepository,
+    noticeRepository: NoticeRepository,
     userRepository: UserRepository
 ){
     private val findClubById = FindClubById(clubRepository)
@@ -44,6 +41,9 @@ class ClubService @Autowired constructor(
     private val findClubsByAddress = FindClubsByAddress(clubRepository)
     private val findClubsByCharacters = FindClubsByCharacters(clubRepository)
     private val findUserById = FindUserById(userRepository)
+    private val saveNotice = SaveNotice(noticeRepository)
+    private val findNoticeByClubId = FindNoticeByClubId(noticeRepository)
+    private val findNoticeById = FindNoticeById(noticeRepository)
 
     private val checkDuplicateClubName = CheckDuplicateClubName(clubRepository)
     private val checkExistClub = CheckExistClub(clubRepository)
@@ -63,11 +63,28 @@ class ClubService @Autowired constructor(
         var club = createClub(requestToClub(createClubRequest))
         club.admin.add(registerAdminInClub(user, club))
         club.members.add(registerMemberClub(user,club))
+
+        // TODO : 임의로 서버에서 공지사항을 생성해주고있다, notice 관련 class 모두 수정해야 함
+        val notice = saveNotice(
+            Notice(id = null, title = club.name + "의 공지사항", content = "현재 공지사항이 없습니다.", club = club)
+        )
+        club.notices.add(notice)
+
         return CreateClubResponse(
             ClubInfo(club),
             clubAdminToUserInfo(club.admin),
             clubMemberToUserInfo(club.members)
         )
+    }
+
+    fun updateNotice(noticeId: Long, updateClubNoticeRequest: UpdateClubNoticeRequest): UpdateClubNoticeResponse{
+        val beforeNotice = findNoticeById(noticeId)
+        beforeNotice.title = updateClubNoticeRequest.title
+        beforeNotice.content = updateClubNoticeRequest.content
+
+        val afterNotice = saveNotice(beforeNotice)
+
+        return UpdateClubNoticeResponse(SimpleNoticeInfo(afterNotice))
     }
 
     fun registerAdminInClub(user:User, club: Club): ClubAdmin{
@@ -79,7 +96,7 @@ class ClubService @Autowired constructor(
         return registerMember(ClubMember(null, club, user))
     }
 
-    // ToDo : 현재 임시 데이터 반환중임, 피드정보 모두 추후 수정 해야 함
+    // TODO : 현재 임시 데이터 반환중임, 피드정보 모두 추후 수정 해야 함
     fun findClubAndFeed(clubId: Long): ClubResponse{
         checkExistClub.verify(clubId)
         val members = clubMemberToUserInfo(findClubMembers(clubId))
@@ -87,7 +104,8 @@ class ClubService @Autowired constructor(
         val club = findClubById(clubId)
 
         // 가데이터 생성
-        val noticeItem1 = SimpleNoticeInfo(club.name+" 모집 공고", club.createTeamDate, "저희는 소중한 팀플레이어를 구합니다.")
+        val notices = findNoticeByClubId(club.id)
+        val noticeItem1 = SimpleNoticeInfo(notices[0])
         val resultItem = SimpleResultInfo("테스트팀",club.createTeamDate, true)
         val resultItem2 = SimpleResultInfo("테스트팀",club.createTeamDate, false)
         val simpleFeeds = mutableListOf<SimpleFeeds>()
@@ -178,7 +196,6 @@ class ClubService @Autowired constructor(
     fun findClubAdmins(clubId: Long): MutableList<ClubAdmin> {
         return findClubAdminsByClubId(clubId)
     }
-
 
     private fun clubAdminToUserInfo(admins: MutableList<ClubAdmin>): MutableList<UserInfo>{
         var userInfos = mutableListOf<UserInfo>()

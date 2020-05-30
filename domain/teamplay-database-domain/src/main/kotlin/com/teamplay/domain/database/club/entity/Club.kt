@@ -52,6 +52,9 @@ data class Club(
     val questions: MutableList<String> = mutableListOf<String>(),
 
     @OneToMany(mappedBy = "club")
+    var notices: MutableList<Notice> = mutableListOf(),
+
+    @OneToMany(mappedBy = "club")
     var members: MutableList<ClubMember> = mutableListOf<ClubMember>(),
 
     @OneToMany(mappedBy = "club")
