@@ -42,7 +42,7 @@ class ClubService @Autowired constructor(
     private val findClubsByCharacters = FindClubsByCharacters(clubRepository)
     private val findUserById = FindUserById(userRepository)
     private val saveNotice = SaveNotice(noticeRepository)
-    private val findNoticeByClubId = FindNoticeByClubId(noticeRepository)
+    private val findNoticesByClubId = FindNoticesByClubId(noticeRepository)
     private val findNoticeById = FindNoticeById(noticeRepository)
 
     private val checkDuplicateClubName = CheckDuplicateClubName(clubRepository)
@@ -104,7 +104,7 @@ class ClubService @Autowired constructor(
         val club = findClubById(clubId)
 
         // 가데이터 생성
-        val notices = findNoticeByClubId(club.id)
+        val notices = findNoticesByClubId(club.id)
         val noticeItem1 = SimpleNoticeInfo(notices[0])
         val resultItem = SimpleResultInfo("테스트팀",club.createTeamDate, true)
         val resultItem2 = SimpleResultInfo("테스트팀",club.createTeamDate, false)

@@ -52,7 +52,6 @@ class ClubController {
     @GetMapping("/join/{clubId}")
     @ResponseStatus(HttpStatus.OK)
     fun getClubJoinInfo(@PathVariable clubId: Long): ClubJoinInfoResponse {
-
         return clubService.findClubJoinInfo(clubId)
     }
 
