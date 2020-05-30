@@ -136,7 +136,7 @@ class ClubService @Autowired constructor(
         clubAdmins.forEach { clubsInfo.add(clubToUserClubInfo(it.club, ClubRole.ADMIN)) }
         clubMembers.forEach { clubsInfo.add(clubToUserClubInfo(it.club, ClubRole.MEMBER)) }
 
-        return UserClubsResponse(clubsInfo.distinctBy { it.id })
+        return UserClubsResponse(clubsInfo.distinctBy { it.clubId })
     }
 
     private fun clubToUserClubInfo(club: Club, clubRole: ClubRole): UserClubInfo{

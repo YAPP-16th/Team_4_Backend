@@ -32,7 +32,6 @@ class TestController {
         }
     }
 
-
     companion object: KLogging() {
         const val CONSTANT_VAL = "상수값"
     }
