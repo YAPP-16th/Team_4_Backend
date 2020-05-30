@@ -40,7 +40,7 @@ class ClubController {
     fun joinClub(
         @Valid @RequestHeader accessToken: String,
         @RequestBody clubId: Long
-    ): ClubResponse{
+    ): ClubResponse {
         val user = authService.getUserByAccessToken(accessToken)
 
         return clubService.joinClub(
@@ -93,11 +93,11 @@ class ClubController {
     }
 
     @ApiOperation(value = "동호회 성격 정보 얻기")
-    @GetMapping("/characters/infos")
+    @GetMapping("club/characters")
     @ResponseStatus(HttpStatus.OK)
-    fun getClubCharacters(): List<ClubCharacter> {
+    fun getClubCharacters(): ClubCharactersResponse {
 
-        return ClubCharacter.values().asList()
+        return ClubCharactersResponse(ClubCharacter.values().asList())
     }
 
     @ApiOperation(value = "동호회 공지사항 수정")
